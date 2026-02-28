@@ -12,40 +12,67 @@
   </head>
   <body class="not-authenticated">
     <nav class="navbar bg-black px-1">
-    <div class="container-fluid py-1">
-        <span class="navbar-brand mb-0 fs-4 text-white fw-medium">Full-Stack App</span> 
+      <div class="container-fluid py-1">
+        <span class="navbar-brand mb-0 fs-4 text-white fw-medium"
+          >Full-Stack App</span
+        >
 
         <div class="d-flex align-items-center">
-            <div class="d-flex gap-2 role-logged-out">
-                <a href="#/login" class="nav-link text-white-50 fs-5 fw-medium">login</a>                
-                <a href="#/register" class="nav-link text-white-50 fs-5 fw-medium">register</a>
-            </div>
+          <div class=" flex-column gap-2 role-logged-out">
+            <a href="#/login" class="nav-link text-white-50 fs-5 fw-medium"
+              >login</a
+            >
+            <a href="#/register" class="nav-link text-white-50 fs-5 fw-medium"
+              >register</a
+            >
+          </div>
 
-            <div class="dropdown role-logged-in">
-                <button class="btn btn-dark dropdown-toggle border-0 fs-5 fw-medium" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <span id="nav-username">Admin</span>
+          <div class="dropdown role-logged-in">
+            <button
+              class="btn btn-dark dropdown-toggle border-0 fs-5 fw-medium"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <span id="nav-username">Admin</span>
+            </button>
+            <ul
+              class="dropdown-menu dropdown-menu-end shadow mt-2"
+              style="min-width: 180px; border-radius: 8px"
+            >
+              <li>
+                <a class="dropdown-item py-2" href="#/profile">Profile</a>
+              </li>
+
+              <li class="role-admin">
+                <a class="dropdown-item py-2" href="#/employees">Employees</a>
+              </li>
+              <li class="role-admin">
+                <a class="dropdown-item py-2" href="#/accounts">Accounts</a>
+              </li>
+              <li class="role-admin">
+                <a class="dropdown-item py-2" href="#/departments"
+                  >Departments</a
+                >
+              </li>
+
+              <li>
+                <a class="dropdown-item py-2" href="#/requests">My Requests</a>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <button
+                  class="dropdown-item py-2 text-danger"
+                  onclick="handleLogout()"
+                >
+                  Logout
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end shadow mt-2" style="min-width: 180px; border-radius: 8px;">
-                    <li><a class="dropdown-item py-2" href="#/profile">Profile</a></li>
-                    
-                    <div class="role-admin">
-                        <li><a class="dropdown-item py-2" href="#/employees">Employees</a></li>
-                        <li><a class="dropdown-item py-2" href="#/accounts">Accounts</a></li>
-                        <li><a class="dropdown-item py-2" href="#/departments">Departments</a></li>
-                    </div>
-                    
-                    <li><a class="dropdown-item py-2" href="#/requests">My Requests</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li>
-                        <button class="dropdown-item py-2 text-danger" onclick="handleLogout()">
-                            Logout
-                        </button>
-                    </li>
-                </ul>
-            </div>
+              </li>
+            </ul>
+          </div>
         </div>
-    </div>
-</nav>
+      </div>
+    </nav>
 
     <section id="home" class="page px-3 mt-5 active">
       <div class="row">
@@ -193,59 +220,61 @@
       </div>
     </section>
 
-  <section id="login" class="page px-3">
-  <div
-    class="alert alert-success d-flex align-items-center mb-4"
-    style="background-color: #d1e7dd; border-color: #badbcc"
-  >
-    <span class="me-2">✅</span> Email verified! You may now log in.
-  </div>
-
-  <h2 class="fw-bold mb-3">Login</h2>
-
-  <div class="col-md-6">
-    <!-- ✅ FORM START -->
-    <form id="login-form" onsubmit="handleLogin(event)">
-
-      <div class="mb-3">
-        <label for="log-email" class="form-label text-secondary small fw-bold">
-          Email
-        </label>
-        <input 
-          type="email" 
-          id="log-email" 
-          name="email"
-          class="form-control" 
-          required 
-        />
+    <section id="login" class="page px-3 py-4">
+      <div
+        class="alert alert-success d-flex align-items-center mb-4"
+        style="background-color: #d1e7dd; border-color: #badbcc"
+      >
+        <span class="me-2">✅</span> Email verified! You may now log in.
       </div>
 
-      <div class="mb-4">
-        <label for="log-password" class="form-label text-secondary small fw-bold">
-          Password
-        </label>
-        <input 
-          type="password" 
-          id="log-password" 
-          name="password"
-          class="form-control" 
-          required 
-        />
-      </div>
+      <h2 class="fw-bold mb-3">Login</h2>
 
-      <div class="d-flex gap-2">
-        <button type="submit" class="btn btn-primary px-4 btn-custom-blue">
-          Login
-        </button>
-        <a href="#/home" class="btn btn-outline-secondary px-4">
-          Cancel
-        </a>
-      </div>
+      <div class="col-md-6">
+        <!-- ✅ FORM START -->
+        <form id="login-form" onsubmit="handleLogin(event)">
+          <div class="mb-3">
+            <label
+              for="log-email"
+              class="form-label text-secondary small fw-bold"
+            >
+              Email
+            </label>
+            <input
+              type="email"
+              id="log-email"
+              name="email"
+              class="form-control"
+              required
+            />
+          </div>
 
-    </form>
-    <!-- ✅ FORM END -->
-  </div>
-</section>
+          <div class="mb-4">
+            <label
+              for="log-password"
+              class="form-label text-secondary small fw-bold"
+            >
+              Password
+            </label>
+            <input
+              type="password"
+              id="log-password"
+              name="password"
+              class="form-control"
+              required
+            />
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary px-4 btn-custom-blue">
+              Login
+            </button>
+            <a href="#/home" class="btn btn-outline-secondary px-4"> Cancel </a>
+          </div>
+        </form>
+        <!-- ✅ FORM END -->
+      </div>
+    </section>
 
     <section id="profile" class="page px-3 mt-5">
       <div class="row">
@@ -282,7 +311,7 @@
       </div>
     </section>
 
-    <section id="employees" class="page px-3 mt-5 role-admin">
+    <section id="employees" class="page px-3 mt-5 ">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold m-0">Employees</h2>
         <button
@@ -391,7 +420,7 @@
       </div>
     </section>
 
-    <section id="departments" class="page px-3 mt-5 role-admin">
+    <section id="departments" class="page px-3 mt-5 ">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold m-0">Departments</h2>
         <button
@@ -491,7 +520,7 @@
       </div>
     </section>
 
-    <section id="accounts" class="page px-3 mt-5 role-admin">
+    <section id="accounts" class="page px-3 mt-5 ">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold m-0">Accounts</h2>
         <button

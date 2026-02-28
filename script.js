@@ -1,7 +1,16 @@
 let currentUser = null;
 
 window.db = {
-  accounts: JSON.parse(localStorage.getItem("accounts_db")) || [],
+  accounts: JSON.parse(localStorage.getItem("accounts_db")) || [
+    {
+      firstName: "admin",
+      lastname: "admin",
+      email: "admin@example.com",
+      password: "Password123",
+      role: "admin",
+      verified: true,
+    },
+  ],
 };
 
 function handleRouting() {
@@ -14,9 +23,15 @@ function handleRouting() {
   });
 
   const targetPage = document.querySelector(cleanHash);
-  if (targetPage) {
-    targetPage.classList.add("active");
+
+  if (
+    targetPage.classList.contains("role-admin") &&
+    !document.body.classList.contains("is-admin")
+  ) {
+    alert("Access denied! admins only.");
+    return navigateTo("#/profile");
   }
+  targetPage.classList.add("active");
 }
 
 window.addEventListener("hashchange", handleRouting);
@@ -48,6 +63,7 @@ function handleRegistration(event) {
     lastname,
     email,
     password,
+    role: "user",
     verified: false,
   };
 
@@ -80,37 +96,79 @@ function handleEmailVerification() {
   }
 }
 
+function handleLogin(event) {
+  event.preventDefault();
 
-function handleLogin(event){
-    event.preventDefault();
+  const email = document.getElementById("log-email").value;
+  const password = document.getElementById("log-password").value;
 
-    const email = document.getElementById('log-email').value;
-    const password = document.getElementById('log-password').value;
-
-    const accountValid = window.db.accounts.find(ac => ac.email === email && ac.password === password && ac.verified);
-
-    if(accountValid){
-        localStorage.setItem('auth_token', accountValid.email);
-        currentUser = accountValid;
-        setAuthState(accountValid, currentUser)
-        navigateTo('#/profile')
-    } else {
-        alert("Error!")
-    }
-
+  const accountValid = window.db.accounts.find(
+    (ac) => ac.email === email && ac.password === password && ac.verified,
+  );
+  console.log(accountValid.role);
+  if (accountValid) {
+    localStorage.setItem("auth_token", accountValid.email);
+    currentUser = accountValid;
+    setAuthState(accountValid, currentUser);
+    navigateTo("#/profile");
+  } else {
+    alert("Error!");
+  }
 }
 
-function setAuthState(isAuth, user){
-    if(isAuth){
-        document.body.classList.remove('not-authenticated');
-        document.body.classList.add('authenticated');
-        if(user.role === 'admin'){
-            document.body.classList.add('is-admin')
-        }
+function setAuthState(isAuth, user) {
+  if (isAuth) {
+    document.body.classList.remove("not-authenticated");
+    document.body.classList.add("authenticated");
+    if (user.role === "admin") {
+      document.body.classList.add("is-admin");
     }
+  }
 }
-
 
 function navigateTo(hash) {
   window.location.hash = hash;
+}
+
+function toggleAccountForm() {
+  const formContainer = document.getElementById("account-form-container");
+  formContainer.classList.toggle("d-none");
+
+  if (!formContainer.classList.contains("d-none")) {
+    document.querySelector("#account-form-container form").reset();
+  }
+}
+
+function toggleEmployeeForm() {
+  const formContainer = document.getElementById("employee-form-container");
+  formContainer.classList.toggle("d-none");
+
+  if (!formContainer.classList.contains("d-none")) {
+    document.querySelector("#employee-form-container form").reset();
+  }
+}
+
+function addRow() {
+  const itemList = document.getElementById("modal-item-list");
+
+  const newRow = document.createElement("div");
+  newRow.className = "d-flex gap-2 mb-2 align-items-center";
+
+  newRow.innerHTML = `
+        <input
+            type="text"
+            class="form-control"
+            placeholder="Item name"
+        />
+        <input type="number" class="form-control w-25" value="1" />
+        <button
+            type="button"
+            class="btn btn-outline-danger px-2"
+            onclick="this.parentElement.remove()"
+        >
+            x
+        </button>
+    `;
+
+  itemList.appendChild(newRow);
 }

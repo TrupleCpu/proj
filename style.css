@@ -6,19 +6,20 @@
     display: block;
 }
 
+
 body.not-authenticated .role-logged-in {
     display: none;
 }
 
 body.authenticated .role-logged-out {
-    display: block;
-}
-
-.role-isadmin {
     display: none;
 }
 
-body.isadmin .role-admin {
+.role-admin {
+    display: none;
+}
+
+body.is-admin .role-admin {
     display: block;
 }
 
