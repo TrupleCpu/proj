@@ -1,17 +1,45 @@
+const STORAGE_KEY = 'ipt_demo_v1';
 let currentUser = null;
 
-window.db = {
-  accounts: JSON.parse(localStorage.getItem("accounts_db")) || [
-    {
-      firstName: "admin",
-      lastname: "admin",
-      email: "admin@example.com",
-      password: "Password123",
-      role: "admin",
-      verified: true,
-    },
-  ],
-};
+function loadFromStorage(){
+  const data = localStorage.getItem(STORAGE_KEY);
+  
+  if(data){
+     window.db = JSON.parse(data);
+  } else {
+
+     window.db = {
+      accounts: [
+        {
+          firstName: "Admin",
+          lastname: "User",
+          email: "admin@example.com",
+          password: "Password123!",
+          role: "admin",
+          verified: true,
+        },
+      ],
+      departments: [
+        {
+          deptName: "Engineering",
+          deptDesc: "Software Team"
+        }, 
+        {
+          deptName: "HR",
+          deptDesc: "Human Resources"
+        }
+      ],
+      employees: []
+    };
+
+    saveToStorage();
+    
+  }
+}
+
+function saveToStorage() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(window.db))
+}
 
 function handleRouting() {
   const hash = window.location.hash || "#/home";
@@ -42,7 +70,7 @@ function handleRegistration(event) {
 
   const form = document.getElementById("registrationForm");
   const firstName = document.getElementById("reg-first-name").value;
-  const lastname = document.getElementById("reg-last-name").value;
+  const lastName = document.getElementById("reg-last-name").value;
   const email = document.getElementById("reg-email").value;
   const password = document.getElementById("reg-password").value;
 
@@ -60,7 +88,7 @@ function handleRegistration(event) {
 
   const registeredAccount = {
     firstName,
-    lastname,
+    lastName,
     email,
     password,
     role: "user",
@@ -71,7 +99,7 @@ function handleRegistration(event) {
 
   localStorage.setItem("unverified_email", email);
 
-  localStorage.setItem("accounts_db", JSON.stringify(window.db.accounts));
+  saveToStorage();
 
   if (form) {
     form.reset();
@@ -148,6 +176,16 @@ function toggleEmployeeForm() {
   }
 }
 
+
+function toggleDeptForm() {
+  const formContainer = document.getElementById("dept-form-container");
+  formContainer.classList.toggle("d-none");
+
+  if (!formContainer.classList.contains("d-none")) {
+    document.querySelector("#dept-form-container form").reset();
+  }
+}
+
 function addRow() {
   const itemList = document.getElementById("modal-item-list");
 
@@ -172,3 +210,117 @@ function addRow() {
 
   itemList.appendChild(newRow);
 }
+
+function handleEmployeeSubmit(event){
+  event.preventDefault();
+
+  const form = document.getElementById("employee-form-containe");
+  const employeeId = document.getElementById("emp-id").value;
+  const employeeEmail = document.getElementById("emp-email").value;
+  const employeePosition = document.getElementById("emp-position").value;
+  const employeeDepartment = document.getElementById("emp-dept").value;
+  const employeeHiredDate = document.getElementById("emp-hire-date").value;
+
+
+  if(!employeeId || !employeeEmail || !employeePosition || !employeeDepartment || !employeeHiredDate){
+     alert("Empty fields!");
+     return;
+  }
+
+  const doesIdExist = window.db.employees.some((ac) => ac.id === employeeId);
+
+   if (doesIdExist) {
+    alert("This id is already exist!");
+    return;
+  }
+
+  const insertEmployee = {
+    id: employeeId,
+    email: employeeEmail,
+    position: employeePosition,
+    department: employeeDepartment,
+    hireDate: employeeHiredDate
+  }
+
+  window.db.employees.push(insertEmployee);
+
+
+  localStorage.setItem("employees_db", JSON.stringify(window.db.employees));
+
+  if (form) {
+    form.reset();
+  }
+
+}
+
+function handleDeptSubmit(event){
+  event.preventDefault();
+
+  const form = document.getElementById("department-form");
+  const departmentName = document.getElementById("dept-name").value.trim();
+  const departmentDescription = document.getElementById("dept-desc").value.trim();
+  
+
+  if(!departmentName || !departmentDescription){
+    alert("Empty field!");
+    return;
+  }
+
+
+  const insertDepartment = {
+    deptName: departmentName,
+    deptDesc: departmentDescription
+  }
+
+
+  window.db.departments.push(insertDepartment);
+
+  saveToStorage()
+
+  if(form){
+    form.reset();
+  }
+}
+
+function handleAccountSubmit(event){
+  event.preventDefault();
+  
+  const firstName = document.getElementById("acc-first-name").value;
+  const lastName = document.getElementById("acc-last-name").value;
+  const email = document.getElementById("acc-email").value;
+  const password = document.getElementById("acc-password").value;
+  const role = document.getElementById("acc-role").value;
+  const verified = document.getElementById("acc-verified").checked;
+
+  if(!firstName || !lastName || !email || !password){
+    alert("Empty fields!");
+    return;
+  }
+
+  const insertAccount = {
+    firstName,
+    lastName,
+    email,
+    password,
+    role,
+    verified
+  }
+  
+  const doesEmailExist = window.db.accounts.some((ac) => ac.email === email);
+
+  if (doesEmailExist) {
+    alert("This email is already registered!");
+    return;
+  }
+
+  if(!verified){
+      localStorage.setItem("unverified_email", email);
+
+  }
+
+  window.db.accounts.push(insertAccount)
+
+  saveToStorage()
+}
+
+loadFromStorage()
