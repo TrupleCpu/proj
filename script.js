@@ -1,5 +1,10 @@
 const STORAGE_KEY = 'ipt_demo_v1';
 let currentUser = null;
+const routes = {
+  '/accounts': renderAccounts,
+  '/employees': renderEmployees,
+  '/departments': renderDepartments
+};
 
 function loadFromStorage(){
   const data = localStorage.getItem(STORAGE_KEY);
@@ -15,7 +20,7 @@ function loadFromStorage(){
           lastname: "User",
           email: "admin@example.com",
           password: "Password123!",
-          role: "admin",
+          role: "Admin",
           verified: true,
         },
       ],
@@ -34,6 +39,19 @@ function loadFromStorage(){
 
     saveToStorage();
     
+  }
+
+
+  const savedToken = localStorage.getItem("auth_token");
+  if(savedToken){
+    
+    const activeUser = window.db.accounts.find(ac => ac.email === savedToken)
+    
+    if(activeUser){
+      currentUser = activeUser;
+      console.log(currentUser)
+      setAuthState(true, currentUser)
+    }
   }
 }
 
@@ -60,10 +78,16 @@ function handleRouting() {
     return navigateTo("#/profile");
   }
   targetPage.classList.add("active");
+
+  let routeKey = cleanHash.replace("#", "/");
+
+  if(routes[routeKey]){
+    routes[routeKey]();
+  }
+
 }
 
-window.addEventListener("hashchange", handleRouting);
-window.addEventListener("load", handleRouting);
+
 
 function handleRegistration(event) {
   event.preventDefault();
@@ -148,7 +172,7 @@ function setAuthState(isAuth, user) {
   if (isAuth) {
     document.body.classList.remove("not-authenticated");
     document.body.classList.add("authenticated");
-    if (user.role === "admin") {
+    if (user.role.toLowerCase() === "admin") {
       document.body.classList.add("is-admin");
     }
   }
@@ -214,7 +238,8 @@ function addRow() {
 function handleEmployeeSubmit(event){
   event.preventDefault();
 
-  const form = document.getElementById("employee-form-containe");
+  const form = document.getElementById("employee-form-container");
+  const employeeListBody = document.getElementById("employee-list-body");
   const employeeId = document.getElementById("emp-id").value;
   const employeeEmail = document.getElementById("emp-email").value;
   const employeePosition = document.getElementById("emp-position").value;
@@ -244,12 +269,39 @@ function handleEmployeeSubmit(event){
 
   window.db.employees.push(insertEmployee);
 
+  saveToStorage();
 
-  localStorage.setItem("employees_db", JSON.stringify(window.db.employees));
+  window.db.employees.forEach(em => {
+     employeeListBody.innerHTML += `
+       <tr>
+              <td>${em.id}</td>
+              <td>${em.email}</td>
+              <td>${em.position}</td>
+              <td>${em.department}</td>
+              <td>${em.hireDate}</td>
+              <td>
+                <div class="d-flex gap-1">
+                  <button class="btn btn-sm btn-outline-primary px-2">
+                    Edit
+                  </button>
+                  <button
+                    class="btn btn-sm btn-outline-warning text-dark px-2"
+                    style="font-size: 0.75rem"
+                  >
+                    Reset Password
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger px-2">
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+  `
+   })
 
-  if (form) {
-    form.reset();
-  }
+
+
+  event.target.reset();
 
 }
 
@@ -257,6 +309,7 @@ function handleDeptSubmit(event){
   event.preventDefault();
 
   const form = document.getElementById("department-form");
+  const deptListBody = document.getElementById("dept-list-body");
   const departmentName = document.getElementById("dept-name").value.trim();
   const departmentDescription = document.getElementById("dept-desc").value.trim();
   
@@ -275,16 +328,34 @@ function handleDeptSubmit(event){
 
   window.db.departments.push(insertDepartment);
 
-  saveToStorage()
+   saveToStorage();
 
-  if(form){
-    form.reset();
-  }
+  window.db.departments.forEach(d => {
+     deptListBody.innerHTML += `
+       <tr>
+              <td>${d.deptName}</td>
+              <td class="text-secondary">${d.deptDesc}</td>   
+              <td>
+                <div class="d-flex gap-1">
+                  <button class="btn btn-sm btn-outline-primary px-2">
+                    Edit
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger px-2">
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+  `
+  })
+
+  event.target.reset();
 }
 
 function handleAccountSubmit(event){
   event.preventDefault();
   
+  const accountListBody = document.getElementById("account-list-body");
   const firstName = document.getElementById("acc-first-name").value;
   const lastName = document.getElementById("acc-last-name").value;
   const email = document.getElementById("acc-email").value;
@@ -319,8 +390,103 @@ function handleAccountSubmit(event){
   }
 
   window.db.accounts.push(insertAccount)
-
   saveToStorage()
+  renderAccounts()
+
+  event.target.reset();
 }
+
+function handleLogout(){
+  localStorage.removeItem("auth_token");
+  currentUser = null;
+  setAuthState(false, currentUser);
+  navigateTo("")
+}
+function renderAccounts() {
+  const tbody = document.getElementById("account-list-body");
+  if (!tbody) return; 
+  
+  tbody.innerHTML = ""; 
+
+  if (window.db.accounts.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-secondary">No accounts found.</td></tr>`;
+    return; 
+  }
+  
+  window.db.accounts.forEach(ac => {
+    const lName = ac.lastName || ac.lastname || ''; 
+    tbody.innerHTML += `
+      <tr>
+        <td>${ac.firstName} ${lName}</td>
+        <td>${ac.email}</td>
+        <td>${ac.role}</td>
+        <td><span class="${ac.verified ? 'text-success' : 'text-danger'}">${ac.verified ? "✅" : "❌"}</span></td>
+        <td>
+          <div class="d-flex gap-1">
+            <button class="btn btn-sm btn-outline-primary px-2">Edit</button>
+            <button class="btn btn-sm btn-outline-danger px-2">Delete</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  });
+}
+function renderEmployees() {
+  const tbody = document.getElementById("employee-list-body");
+  if (!tbody) return;
+  
+  tbody.innerHTML = ""; 
+  
+  if (window.db.employees.length === 0) {
+     tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-secondary">No employees found.</td></tr>`;
+     return;
+  }
+
+  window.db.employees.forEach(em => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${em.id}</td>
+        <td>${em.email}</td>
+        <td>${em.position}</td>
+        <td>${em.department}</td>
+        <td>
+          <div class="d-flex gap-1">
+            <button class="btn btn-sm btn-outline-primary px-2">Edit</button>
+            <button class="btn btn-sm btn-outline-danger px-2">Delete</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  });
+}
+function renderDepartments() {
+  const tbody = document.getElementById("dept-list-body");
+  if (!tbody) return;
+  
+  tbody.innerHTML = "";
+
+  if (window.db.departments.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="3" class="text-center py-4 text-secondary">No departments found.</td></tr>`;
+    return;
+  }
+  
+  window.db.departments.forEach(d => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${d.deptName}</td>
+        <td class="text-secondary">${d.deptDesc}</td>   
+        <td>
+          <div class="d-flex gap-1">
+            <button class="btn btn-sm btn-outline-primary px-2">Edit</button>
+            <button class="btn btn-sm btn-outline-danger px-2">Delete</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+window.addEventListener("hashchange", handleRouting);
+window.addEventListener("load", handleRouting);
 
 loadFromStorage()
