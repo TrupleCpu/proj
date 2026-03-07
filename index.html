@@ -62,8 +62,8 @@
               <li><hr class="dropdown-divider" /></li>
               <li>
                 <button
+                  id="logout-btn"
                   class="dropdown-item py-2 text-danger"
-                  onclick="handleLogout()"
                 >
                   Logout
                 </button>
@@ -141,7 +141,7 @@
       <div class="row justify-content-start">
         <div class="col-md-8 col-lg-6">
           <h2 class="fw-bold mb-4">Register Account</h2>
-          <form id="registrationForm" onsubmit="handleRegistration(event)">
+          <form id="registrationForm">
             <div class="mb-3">
               <label class="form-label text-secondary small fw-bold"
                 >First Name</label
@@ -211,8 +211,8 @@
       <p>For demo purposes, click below to simulate verification:</p>
       <div class="d-flex gap-2">
         <button
+          id="verify-email-btn"
           class="btn btn-success px-3"
-          onclick="handleEmailVerification()"
         >
           ✅ Simulate Email Verification
         </button>
@@ -232,8 +232,7 @@
       <h2 class="fw-bold mb-3">Login</h2>
 
       <div class="col-md-6">
-        <!-- ✅ FORM START -->
-        <form id="login-form" onsubmit="handleLogin(event)">
+        <form id="login-form">
           <div class="mb-3">
             <label
               for="log-email"
@@ -273,7 +272,6 @@
             <a href="#/home" class="btn btn-outline-secondary px-4"> Cancel </a>
           </div>
         </form>
-        <!-- ✅ FORM END -->
       </div>
     </section>
 
@@ -284,20 +282,20 @@
 
           <div class="card shadow-sm border" style="border-radius: 8px">
             <div class="card-body p-4">
-              <h4 id="profile-name" class="fw-bold mb-3">Admin User</h4>
+              <h4 id="profile-name" class="fw-bold mb-3"></h4>
 
               <div class="mb-2">
                 <span class="text-secondary fw-bold small text-uppercase"
                   >Email:</span
                 >
-                <span id="profile-email" class="ms-1">admin@example.com</span>
+                <span id="profile-email" class="ms-1"></span>
               </div>
 
               <div class="mb-4">
                 <span class="text-secondary fw-bold small text-uppercase"
                   >Role:</span
                 >
-                <span id="profile-role" class="ms-1">Admin</span>
+                <span id="profile-role" class="ms-1"></span>
               </div>
 
               <button
@@ -316,9 +314,9 @@
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold m-0">Employees</h2>
         <button
+          id="add-employee-btn"
           class="btn btn-success fw-semibold"
           style="background-color: #2d7a4d"
-          onclick="toggleEmployeeForm()"
         >
           + Add Employee
         </button>
@@ -344,7 +342,7 @@
           Add/Edit Employee
         </div>
         <div class="card-body">
-          <form onsubmit="handleEmployeeSubmit(event)">
+          <form id="employee-form">
             <div class="mb-3">
               <label class="form-label small fw-bold text-secondary"
                 >Employee ID</label
@@ -400,8 +398,8 @@
               </button>
               <button
                 type="button"
+                id="cancel-employee-btn"
                 class="btn btn-secondary px-4"
-                onclick="toggleEmployeeForm()"
               >
                 Cancel
               </button>
@@ -415,9 +413,9 @@
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold m-0">Departments</h2>
         <button
+          id="add-dept-btn"
           class="btn btn-success fw-semibold"
           style="background-color: #2d7a4d"
-          onclick="toggleDeptForm()"
         >
           + Add Department
         </button>
@@ -441,7 +439,7 @@
           Add/Edit Department
         </div>
         <div class="card-body">
-          <form id="department-form" onsubmit="handleDeptSubmit(event)">
+          <form id="department-form">
             <div class="mb-3">
               <label class="form-label small fw-bold text-secondary"
                 >Department Name</label
@@ -475,8 +473,8 @@
               </button>
               <button
                 type="button"
+                id="cancel-dept-btn"
                 class="btn btn-secondary px-4"
-                onclick="toggleDeptForm()"
               >
                 Cancel
               </button>
@@ -490,9 +488,9 @@
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold m-0">Accounts</h2>
         <button
+          id="add-account-btn"
           class="btn btn-success fw-semibold"
           style="background-color: #2d7a4d"
-          onclick="toggleAccountForm()"
         >
           + Add Account
         </button>
@@ -518,7 +516,7 @@
           Add/Edit Account
         </div>
         <div class="card-body">
-          <form onsubmit="handleAccountSubmit(event)">
+          <form id="account-form">
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label small fw-bold text-secondary"
@@ -596,8 +594,8 @@
               </button>
               <button
                 type="button"
+                id="cancel-account-btn"
                 class="btn btn-secondary px-4"
-                onclick="toggleAccountForm()"
               >
                 Cancel
               </button>
@@ -648,6 +646,7 @@
         </table>
       </div>
     </section>
+
     <div
       class="modal fade"
       id="requestModal"
@@ -695,8 +694,8 @@
                   <input type="number" class="form-control w-25" value="1" />
                   <button
                     type="button"
+                    id="initial-add-row-btn"
                     class="btn btn-outline-secondary px-2"
-                    onclick="addRow()"
                   >
                     +
                   </button>
@@ -706,13 +705,13 @@
               <div class="mt-4">
                 <button
                   type="button"
+                  id="submit-request-btn"
                   class="btn btn-primary px-4 py-2 fw-bold"
                   style="
                     background-color: #515dfa;
                     border: none;
                     border-radius: 8px;
                   "
-                  onclick="submitRequest()"
                 >
                   Submit Request
                 </button>
@@ -753,8 +752,8 @@
             </button>
             <button
               type="button"
+              id="execute-delete-btn"
               class="btn btn-danger"
-              onclick="executeDelete()"
             >
               Delete
             </button>
