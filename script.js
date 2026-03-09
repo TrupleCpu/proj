@@ -1,3 +1,4 @@
+/// Global Configuration
 const STORAGE_KEY = "ipt_demo_v1";
 let currentUser = null;
 let deleteTarget = { type: null, index: null };
@@ -12,6 +13,8 @@ const routes = {
   "/requests": renderRequests
 };
 
+
+// Functions that retrieves data from localStorage
 function loadFromStorage() {
   const data = localStorage.getItem(STORAGE_KEY);
 
@@ -58,10 +61,11 @@ function loadFromStorage() {
   }
 }
 
+// Function that will save data from localStrage
 function saveToStorage() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(window.db));
 }
-
+//Function that handles the routing of the app
 function handleRouting() {
   const hash = window.location.hash || "#/home";
   let cleanHash = hash.replace("/", "");
@@ -110,6 +114,7 @@ function handleRouting() {
   }
 }
 
+// Handles the registration for the app
 function handleRegistration(event) {
   event.preventDefault();
 
@@ -152,6 +157,7 @@ function handleRegistration(event) {
   navigateTo("#/verify-email");
 }
 
+// Handles the verification
 function handleEmailVerification() {
   const email = localStorage.getItem("unverified_email");
   const targetAccount = window.db.accounts.find((ac) => ac.email === email);
@@ -168,6 +174,7 @@ function handleEmailVerification() {
   }
 }
 
+// Handles the login for the app
 function handleLogin(event) {
   event.preventDefault();
 
@@ -192,6 +199,7 @@ function handleLogin(event) {
   }
 }
 
+// Handles the authentication state of the user and detects whether the user is an admin or user  
 function setAuthState(isAuth, user) {
   if (isAuth) {
     document.body.classList.remove("not-authenticated");
@@ -212,11 +220,12 @@ function setAuthState(isAuth, user) {
   }
 }
 
+// Handles where the user will navigated to with the hash as its parameter
 function navigateTo(hash) {
   window.location.hash = hash;
 }
 
-// --> 2. RESET editTarget WHEN CLOSING FORMS
+// Toggle functions for the CRUD operations
 function toggleAccountForm() {
   const formContainer = document.getElementById("account-form-container");
   formContainer.classList.toggle("d-none");
@@ -251,6 +260,7 @@ function toggleDeptForm() {
   }
 }
 
+// Function for dynamically add an input box for the Request Page
 function addRow() {
   const itemList = document.getElementById("modal-item-list");
   const newRow = document.createElement("div");
@@ -273,6 +283,7 @@ function addRow() {
   });
 }
 
+// Functions that handle the submission for the CRUD operations
 function handleEmployeeSubmit(event) {
   event.preventDefault();
 
@@ -398,6 +409,7 @@ function handleAccountSubmit(event) {
   toggleAccountForm(); 
 }
 
+// Function that handles the logout
 function handleLogout() {
   localStorage.removeItem("auth_token");
   currentUser = null;
@@ -407,6 +419,7 @@ function handleLogout() {
   showToast("Logged out successfully.", "success");
 }
 
+// Function that handle the submission of request
 function submitRequest() {
   const itemList = document.getElementById("modal-item-list");
   const rows = itemList.querySelectorAll(".d-flex");
@@ -459,6 +472,8 @@ function submitRequest() {
   renderRequests();
   showToast("Request submitted successfully!", "success");
 }
+
+// Functions for rendering the data for each pages
 
 function renderProfile() {
    if(currentUser){
@@ -674,6 +689,7 @@ function renderRequests() {
   });
 }
 
+// Function that handles update for request status
 function updateRequestStatus(requestId, newStatus) {
   const requestToUpdate = window.db.requests.find(req => req.id === requestId);
   
@@ -686,6 +702,7 @@ function updateRequestStatus(requestId, newStatus) {
   }
 }
 
+// Functions for deleting the datas
 function confirmDelete(type, index) {
   deleteTarget = { type, index };
   const modal = new bootstrap.Modal(
@@ -713,6 +730,7 @@ function executeDelete() {
   showToast("Item deleted successfully!", "success");
 }
 
+// Function that handles the editing for the CRUD operation
 function editItem(type, index) {
   editTarget = { type: type, index: index }; 
   const item = window.db[type][index];
@@ -738,6 +756,7 @@ function editItem(type, index) {
     document.getElementById("acc-verified").checked = item.verified;
   }
 }
+// Function that populates the dropdown menu for account page
 
 function populateDepartmentDropdown() {
   const deptSelect = document.getElementById("emp-dept");
@@ -749,6 +768,7 @@ function populateDepartmentDropdown() {
     deptSelect.innerHTML += `<option value="${dept.deptName}">${dept.deptName}</option>`
   );
 }
+//Function that handles the toast 
 
 function showToast(message, type = "danger") {
   const toastEl = document.getElementById("appToast");
@@ -760,6 +780,8 @@ function showToast(message, type = "danger") {
   const toastInstance = new bootstrap.Toast(toastEl);
   toastInstance.show();
 }
+
+// Event Listeners and App Initialization
 
 window.addEventListener("hashchange", handleRouting);
 window.addEventListener("load", handleRouting);
