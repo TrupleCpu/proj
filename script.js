@@ -66,6 +66,13 @@ function handleRouting() {
   const hash = window.location.hash || "#/home";
   let cleanHash = hash.replace("/", "");
 
+  const protectedRoutes = ["#profile", "#accounts", "#employees", "#departments", "#requests"];
+
+  if (protectedRoutes.includes(cleanHash) && !currentUser) {
+    showToast("Please log in to access this page.", "warning");
+    return navigateTo("");
+  }
+
   document.querySelectorAll(".page").forEach((page) => {
     page.classList.remove("active");
   });
@@ -354,7 +361,11 @@ function handleAccountSubmit(event) {
     return;
   }
 
-  // Check if email exists, BUT ignore it if we are editing the SAME row
+  if (password.length < 6) {
+    showToast("Password must be at least 6 characters long!", "warning");
+    return;
+  }
+
   const existingIndex = window.db.accounts.findIndex((ac) => ac.email === email);
   if (existingIndex !== -1 && existingIndex !== editTarget.index) {
     showToast("This email is already registered!", "danger");
@@ -374,7 +385,6 @@ function handleAccountSubmit(event) {
     verified,
   };
 
-  // --> 3. CHECK IF WE ARE EDITING OR ADDING
   if (editTarget.type === "accounts" && editTarget.index !== null) {
     window.db.accounts[editTarget.index] = insertAccount;
     showToast("Account updated successfully!", "success");
@@ -491,7 +501,13 @@ function renderAccounts() {
     document.getElementById(`edit-acc-${index}`).addEventListener("click", function() {
       editItem('accounts', index);
     });
+    
     document.getElementById(`del-acc-${index}`).addEventListener("click", function() {
+      if (currentUser && currentUser.email === ac.email) {
+        showToast("Action Denied: You cannot delete your own account!", "danger");
+        return; 
+      }
+      
       confirmDelete('accounts', index);
     });
   });
