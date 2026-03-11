@@ -181,22 +181,28 @@ function handleLogin(event) {
   const email = document.getElementById("log-email").value;
   const password = document.getElementById("log-password").value;
 
-  const accountValid = window.db.accounts.find(
-    (ac) => ac.email === email && ac.password === password && ac.verified,
-  );
-  
-  if (accountValid) {
-    console.log(accountValid.role);
-    localStorage.setItem("auth_token", accountValid.email);
-    currentUser = accountValid;
-    setAuthState(true, currentUser);
-    
-    showToast(`Welcome back, ${currentUser.firstName}! Logged in successfully.`, "success");
-    
-    navigateTo("#/profile");
-  } else {
-    showToast("Invalid credentials or unverified email!", "danger");
+  const matchedUser = window.db.accounts.find((ac) => ac.email === email && ac.password === password);
+
+  if (!matchedUser) {
+    showToast("Invalid credentials!", "danger");
+    return;
   }
+
+  if (!matchedUser.verified) {
+    localStorage.setItem("unverified_email", matchedUser.email);
+    showToast("Please verify your email before logging in.", "warning");
+    return navigateTo("#/verify-email");
+  }
+
+  // Successful login
+  console.log(matchedUser.role);
+  localStorage.setItem("auth_token", matchedUser.email);
+  currentUser = matchedUser;
+  setAuthState(true, currentUser);
+
+  showToast(`Welcome back, ${currentUser.firstName}! Logged in successfully.`, "success");
+
+  navigateTo("#/profile");
 }
 
 // Handles the authentication state of the user and detects whether the user is an admin or user  
